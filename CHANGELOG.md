@@ -1,3 +1,42 @@
+## [2.7.2](https://github.com/sds100/KeyMapper/releases/tag/v2.7.2)
+
+#### 22 December 2024
+
+## Added
+
+- #1298 add action to launch the Android device controls screen for managing Home devices.
+
+## Bug fixes
+
+- #1342 add Meta modifier keys to the key event action.
+- #1101 deprecate the toggle split screen action on Android 12L and newer.
+- #1370 warn the user that extra permissions are required for the Launch app action on Xiaomi devices
+- #1371 try to fix the app not opening on people's devices
+
+## [2.7.1](https://github.com/sds100/KeyMapper/releases/tag/v2.7.1)
+
+#### 13 December 2024
+
+## Bug fixes
+
+- #1360 complete the documentation for advanced triggers at docs.keymapper.club.
+- #1364 key event actions no longer crash when using Shizuku.
+- #1362 backing up and restoring key maps works again.
+
+## [2.7.0](https://github.com/sds100/KeyMapper/releases/tag/v2.7.0)
+
+#### 8 December 2024
+
+## Added
+
+- #1274 New trigger! You can now trigger your key maps from any of the ways your phone launches the assistant! This could be the Bixby button, Power button, or a button on your headset.
+- #1304 Vietnamese translations.
+
+## Bug fixes
+
+- #1222 #1307 Key Mapper doesn't execute the correct app shortcut action if you created multiple from the same app.
+- #1328 Single-character non-ASCII TEXT_BLOCK input crashes the service
+
 ## [2.6.2](https://github.com/sds100/KeyMapper/releases/tag/v2.6.2)
 
 #### 9 September 2024
