@@ -20,9 +20,8 @@ object ViewModelHelper {
         val dialog = PopupUi.Dialog(
             title = resourceProvider.getString(R.string.dialog_title_key_mapper_crashed),
             message = resourceProvider.getText(R.string.dialog_message_key_mapper_crashed),
-            positiveButtonText = resourceProvider.getString(R.string.dialog_button_read_dont_kill_my_app_no),
-            negativeButtonText = resourceProvider.getString(R.string.neg_cancel),
-            neutralButtonText = resourceProvider.getString(R.string.dialog_button_read_dont_kill_my_app_yes),
+            positiveButtonText = resourceProvider.getString(R.string.dialog_button_read_dont_kill_my_app_yes),
+            negativeButtonText = resourceProvider.getString(R.string.dialog_button_read_dont_kill_my_app_no),
         )
 
         val response = popupViewModel.showPopup("app_crashed_prompt", dialog) ?: return
@@ -91,19 +90,11 @@ object ViewModelHelper {
         }
     }
 
-    suspend fun handleAccessibilityServiceStoppedSnackBar(
+    suspend fun handleAccessibilityServiceStoppedDialog(
         resourceProvider: ResourceProvider,
         popupViewModel: PopupViewModel,
         startService: () -> Boolean,
-        @StringRes message: Int,
     ) {
-        val snackBar = PopupUi.SnackBar(
-            message = resourceProvider.getString(message),
-            actionText = resourceProvider.getString(R.string.pos_turn_on),
-        )
-
-        popupViewModel.showPopup("snackbar_enable_service", snackBar) ?: return
-
         val explanationResponse =
             showAccessibilityServiceExplanationDialog(resourceProvider, popupViewModel)
 

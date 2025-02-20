@@ -16,12 +16,14 @@ import io.github.sds100.keymapper.mappings.ClickType
 import io.github.sds100.keymapper.mappings.keymaps.KeyMap
 import io.github.sds100.keymapper.mappings.keymaps.KeyMapAction
 import io.github.sds100.keymapper.mappings.keymaps.trigger.KeyCodeTriggerKey
+import io.github.sds100.keymapper.mappings.keymaps.trigger.KeyEventDetectionSource
 import io.github.sds100.keymapper.mappings.keymaps.trigger.Trigger
 import io.github.sds100.keymapper.mappings.keymaps.trigger.TriggerKey
 import io.github.sds100.keymapper.mappings.keymaps.trigger.TriggerKeyDevice
 import io.github.sds100.keymapper.mappings.keymaps.trigger.TriggerMode
-import io.github.sds100.keymapper.system.devices.InputDeviceInfo
-import io.github.sds100.keymapper.system.keyevents.KeyEventUtils
+import io.github.sds100.keymapper.system.inputevents.InputEventUtils
+import io.github.sds100.keymapper.system.inputevents.MyKeyEvent
+import io.github.sds100.keymapper.system.inputevents.MyMotionEvent
 import io.github.sds100.keymapper.util.Error
 import io.github.sds100.keymapper.util.InputEventType
 import io.github.sds100.keymapper.util.Result
@@ -109,6 +111,7 @@ class KeyMapController(
                 val parallelTriggerActionPerformers =
                     mutableMapOf<Int, ParallelTriggerActionPerformer>()
                 val parallelTriggerModifierKeyIndices = mutableListOf<Pair<Int, Int>>()
+                val triggerKeysThatSendRepeatedKeyEvents = mutableSetOf<KeyCodeTriggerKey>()
 
                 // Only process key maps that can be triggered
                 val validKeyMaps = value.filter { keyMap ->
@@ -123,6 +126,10 @@ class KeyMapController(
                     keyMap.trigger.keys
                         .mapNotNull { it as? KeyCodeTriggerKey }
                         .forEachIndexed { keyIndex, key ->
+                            if (key.detectionSource == KeyEventDetectionSource.INPUT_METHOD && key.consumeEvent) {
+                                triggerKeysThatSendRepeatedKeyEvents.add(key)
+                            }
+
                             if (keyMap.trigger.mode == TriggerMode.Sequence &&
                                 key.clickType == ClickType.LONG_PRESS
                             ) {
@@ -242,7 +249,7 @@ class KeyMapController(
                     MutableList(triggers.size) { mutableSetOf<Int>() }
 
                 for (triggerIndex in parallelTriggers) {
-                    val trigger = triggers[triggerIndex]
+                    val parallelTrigger = triggers[triggerIndex]
 
                     otherTriggerLoop@ for (otherTriggerIndex in sequenceTriggers) {
                         val otherTrigger = triggers[otherTriggerIndex]
@@ -252,7 +259,7 @@ class KeyMapController(
                             continue@otherTriggerLoop
                         }
 
-                        for ((keyIndex, key) in trigger.keys.withIndex()) {
+                        for ((keyIndex, key) in parallelTrigger.keys.withIndex()) {
                             var lastMatchedIndex: Int? = null
 
                             for ((otherKeyIndex, otherKey) in otherTrigger.keys.withIndex()) {
@@ -264,7 +271,7 @@ class KeyMapController(
                                         continue@otherTriggerLoop
                                     }
 
-                                    if (keyIndex == trigger.keys.lastIndex) {
+                                    if (keyIndex == parallelTrigger.keys.lastIndex) {
                                         sequenceTriggersOverlappingParallelTriggers[triggerIndex].add(
                                             otherTriggerIndex,
                                         )
@@ -378,6 +385,8 @@ class KeyMapController(
                 this.parallelTriggerActionPerformers = parallelTriggerActionPerformers
                 this.sequenceTriggerActionPerformers = sequenceTriggerActionPerformers
 
+                this.triggerKeysThatSendRepeatedKeyEvents = triggerKeysThatSendRepeatedKeyEvents
+
                 reset()
             }
 
@@ -480,30 +489,48 @@ class KeyMapController(
 
     private var modifierKeyEventActions: Boolean = false
     private var notModifierKeyEventActions: Boolean = false
-    private var keyCodesToImitateUpAction: MutableSet<Int> = mutableSetOf<Int>()
+    private var keyCodesToImitateUpAction: MutableSet<Int> = mutableSetOf()
     private var metaStateFromActions: Int = 0
     private var metaStateFromKeyEvent: Int = 0
 
-    private val eventDownTimeMap: MutableMap<Event, Long> = mutableMapOf<Event, Long>()
+    private val eventDownTimeMap: MutableMap<Event, Long> = mutableMapOf()
+
+    /**
+     * This solves issue #1386. This stores the jobs that will wait until the sequence trigger
+     * times out and check whether the overlapping sequence trigger was indeed triggered.
+     */
+    private val performActionsAfterSequenceTriggerTimeout: MutableMap<Int, Job> = mutableMapOf()
 
     /**
      * The indexes of parallel triggers that didn't have their actions performed because there is a matching trigger but
      * for a long-press. These actions should only be performed if the long-press fails, otherwise when the user
      * holds down the trigger keys for the long-press trigger, actions from both triggers will be performed.
      */
-    private val performActionsOnFailedLongPress: MutableSet<Int> = mutableSetOf<Int>()
+    private val performActionsOnFailedLongPress: MutableSet<Int> = mutableSetOf()
 
     /**
      * The indexes of parallel triggers that didn't have their actions performed because there is a matching trigger but
      * for a double-press. These actions should only be performed if the double-press fails, otherwise each time the user
      * presses the keys for the double press, actions from both triggers will be performed.
      */
-    private val performActionsOnFailedDoublePress: MutableSet<Int> = mutableSetOf<Int>()
+    private val performActionsOnFailedDoublePress: MutableSet<Int> = mutableSetOf()
 
     /**
      * Maps jobs to perform an action after a long press to their corresponding parallel trigger index
      */
-    private val parallelTriggerLongPressJobs: SparseArrayCompat<Job> = SparseArrayCompat<Job>()
+    private val parallelTriggerLongPressJobs: SparseArrayCompat<Job> = SparseArrayCompat()
+
+    /**
+     * Keys that are detected through an input method will potentially send multiple DOWN key events
+     * with incremented repeatCounts, such as DPAD buttons. These repeated DOWN key events must
+     * all be consumed and ignored because the UP key event is only sent once at the end. The action
+     * must not be executed for each repeat. The user may potentially have many hundreds
+     * of trigger keys so to reduce latency this set caches which keys
+     * will be affected by this behavior.
+     *
+     * NOTE: This only contains the trigger keys that are flagged to consume the key event.
+     */
+    private var triggerKeysThatSendRepeatedKeyEvents: Set<KeyCodeTriggerKey> = emptySet()
 
     private var parallelTriggerActionPerformers: Map<Int, ParallelTriggerActionPerformer> =
         emptyMap()
@@ -548,6 +575,8 @@ class KeyMapController(
             PreferenceDefaults.FORCE_VIBRATE,
         )
 
+    private val dpadMotionEventTracker: DpadMotionEventTracker = DpadMotionEventTracker()
+
     init {
         coroutineScope.launch {
             useCase.allKeyMapList.collectLatest { keyMapList ->
@@ -557,17 +586,39 @@ class KeyMapController(
         }
     }
 
+    fun onMotionEvent(event: MyMotionEvent): Boolean {
+        if (!detectKeyMaps) return false
+
+        // See https://developer.android.com/develop/ui/views/touch-and-input/game-controllers/controller-input#dpad
+        // Some controllers send motion events as well as key events when DPAD buttons
+        // are pressed, while others just send key events.
+        // The motion events must be consumed but this means the following key events are also
+        // consumed so one must rely on converting these motion events oneself.
+
+        val convertedKeyEvents = dpadMotionEventTracker.convertMotionEvent(event)
+
+        var consume = false
+
+        for (keyEvent in convertedKeyEvents) {
+            if (onKeyEventPostFilter(keyEvent)) {
+                consume = true
+            }
+        }
+
+        return consume
+    }
+
     /**
      * @return whether to consume the [KeyEvent].
      */
-    fun onKeyEvent(
-        keyCode: Int,
-        action: Int,
-        metaState: Int,
-        scanCode: Int = 0,
-        device: InputDeviceInfo?,
-    ): Boolean {
+    fun onKeyEvent(keyEvent: MyKeyEvent): Boolean {
         if (!detectKeyMaps) return false
+
+        if (dpadMotionEventTracker.onKeyEvent(keyEvent)) {
+            return true
+        }
+
+        val device = keyEvent.device
 
         if (device != null) {
             if ((device.isExternal && !detectExternalEvents) || (!device.isExternal && !detectInternalEvents)) {
@@ -575,7 +626,11 @@ class KeyMapController(
             }
         }
 
-        metaStateFromKeyEvent = metaState
+        return onKeyEventPostFilter(keyEvent)
+    }
+
+    private fun onKeyEventPostFilter(keyEvent: MyKeyEvent): Boolean {
+        metaStateFromKeyEvent = keyEvent.metaState
 
         // remove the metastate from any modifier keys that remapped and are pressed down
         for (it in parallelTriggerModifierKeyIndices) {
@@ -589,24 +644,30 @@ class KeyMapController(
 
             if (parallelTriggerEventsAwaitingRelease[triggerIndex][eventIndex]) {
                 metaStateFromKeyEvent =
-                    metaStateFromKeyEvent.minusFlag(KeyEventUtils.modifierKeycodeToMetaState(key.keyCode))
+                    metaStateFromKeyEvent.minusFlag(InputEventUtils.modifierKeycodeToMetaState(key.keyCode))
             }
         }
 
         val event =
-            if (device != null && device.isExternal) {
-                Event(keyCode, null, device.descriptor)
+            if (keyEvent.device != null && keyEvent.device.isExternal) {
+                Event(keyEvent.keyCode, null, keyEvent.device.descriptor, keyEvent.repeatCount)
             } else {
                 Event(
-                    keyCode,
-                    null,
-                    null,
+                    keyCode = keyEvent.keyCode,
+                    clickType = null,
+                    descriptor = null,
+                    repeatCount = keyEvent.repeatCount,
                 )
             }
 
-        when (action) {
-            KeyEvent.ACTION_DOWN -> return onKeyDown(event, device?.id ?: 0, scanCode)
-            KeyEvent.ACTION_UP -> return onKeyUp(event, device?.id ?: 0, scanCode)
+        when (keyEvent.action) {
+            KeyEvent.ACTION_DOWN -> return onKeyDown(
+                event,
+                keyEvent.device?.id ?: 0,
+                keyEvent.scanCode,
+            )
+
+            KeyEvent.ACTION_UP -> return onKeyUp(event, keyEvent.device?.id ?: 0, keyEvent.scanCode)
         }
 
         return false
@@ -616,6 +677,20 @@ class KeyMapController(
      * @return whether to consume the [KeyEvent].
      */
     private fun onKeyDown(event: Event, deviceId: Int, scanCode: Int): Boolean {
+        // Must come before saving the event down time because
+        // there is no corresponding up key event for key events with a repeat count > 0
+        if (event.repeatCount > 0) {
+            val matchingTriggerKey = triggerKeysThatSendRepeatedKeyEvents.any {
+                it.matchesEvent(event.withShortPress) ||
+                    it.matchesEvent(event.withLongPress) ||
+                    it.matchesEvent(event.withDoublePress)
+            }
+
+            if (matchingTriggerKey) {
+                return true
+            }
+        }
+
         eventDownTimeMap[event] = currentTime
 
         var consumeEvent = false
@@ -780,31 +855,63 @@ class KeyMapController(
                     mappedToParallelTriggerAction = true
                     parallelTriggersAwaitingReleaseAfterBeingTriggered[triggerIndex] = true
 
-                    val actionKeys = triggerActions[triggerIndex]
+                    // See issue #1386.
+                    val overlappingSequenceTrigger =
+                        sequenceTriggersOverlappingParallelTriggers[triggerIndex]
+                            // Only consider the sequence triggers where this
+                            // short press trigger has been already pressed
+                            // or will be pressed next.
+                            .filter {
+                                for (i in 0..(lastMatchedEventIndices[it] + 1)) {
+                                    val matchingEvent = triggers[it].matchingEventAtIndex(
+                                        event.withShortPress,
+                                        i,
+                                    )
 
-                    actionKeys.forEach { actionKey ->
-                        val action = actionMap[actionKey] ?: return@forEach
+                                    if (matchingEvent) {
+                                        return@filter true
+                                    }
+                                }
 
-                        if (action.data is ActionData.InputKeyEvent) {
-                            val actionKeyCode = action.data.keyCode
-
-                            if (isModifierKey(actionKeyCode)) {
-                                val actionMetaState =
-                                    KeyEventUtils.modifierKeycodeToMetaState(actionKeyCode)
-                                metaStateFromActions =
-                                    metaStateFromActions.withFlag(actionMetaState)
+                                return@filter false
                             }
+                            .maxByOrNull { sequenceTriggerTimeout(triggers[it]) }
+
+                    if (overlappingSequenceTrigger == null) {
+                        val actionKeys = triggerActions[triggerIndex]
+
+                        actionKeys.forEach { actionKey ->
+                            val action = actionMap[actionKey] ?: return@forEach
+
+                            if (action.data is ActionData.InputKeyEvent) {
+                                val actionKeyCode = action.data.keyCode
+
+                                if (isModifierKey(actionKeyCode)) {
+                                    val actionMetaState =
+                                        InputEventUtils.modifierKeycodeToMetaState(actionKeyCode)
+                                    metaStateFromActions =
+                                        metaStateFromActions.withFlag(actionMetaState)
+                                }
+                            }
+
+                            detectedShortPressTriggers.add(triggerIndex)
+
+                            val vibrateDuration = when {
+                                trigger.vibrate -> vibrateDuration(trigger)
+                                forceVibrate.value -> defaultVibrateDuration.value
+                                else -> -1L
+                            }
+
+                            vibrateDurations.add(vibrateDuration)
                         }
+                    } else {
+                        performActionsAfterSequenceTriggerTimeout[triggerIndex]?.cancel()
 
-                        detectedShortPressTriggers.add(triggerIndex)
-
-                        val vibrateDuration = when {
-                            trigger.vibrate -> vibrateDuration(trigger)
-                            forceVibrate.value -> defaultVibrateDuration.value
-                            else -> -1L
-                        }
-
-                        vibrateDurations.add(vibrateDuration)
+                        performActionsAfterSequenceTriggerTimeout[triggerIndex] =
+                            performActionsAfterSequenceTriggerTimeout(
+                                triggerIndex,
+                                overlappingSequenceTrigger,
+                            )
                     }
                 }
             }
@@ -1172,7 +1279,7 @@ class KeyMapController(
                             actionMap[actionKey]?.let { action ->
                                 if (action.data is ActionData.InputKeyEvent && isModifierKey(action.data.keyCode)) {
                                     val actionMetaState =
-                                        KeyEventUtils.modifierKeycodeToMetaState(action.data.keyCode)
+                                        InputEventUtils.modifierKeycodeToMetaState(action.data.keyCode)
 
                                     metaStateFromActionsToRemove =
                                         metaStateFromActionsToRemove.withFlag(actionMetaState)
@@ -1374,14 +1481,14 @@ class KeyMapController(
         metaStateFromKeyEvent = 0
         keyCodesToImitateUpAction = mutableSetOf()
 
-        parallelTriggerLongPressJobs.valueIterator().forEach {
-            it.cancel()
-        }
-
+        parallelTriggerLongPressJobs.valueIterator().forEach { it.cancel() }
         parallelTriggerLongPressJobs.clear()
 
         parallelTriggerActionPerformers.values.forEach { it.reset() }
         sequenceTriggerActionPerformers.values.forEach { it.reset() }
+
+        performActionsAfterSequenceTriggerTimeout.forEach { (_, job) -> job.cancel() }
+        performActionsAfterSequenceTriggerTimeout.clear()
     }
 
     /**
@@ -1430,8 +1537,41 @@ class KeyMapController(
         return detectedTriggerIndexes.isNotEmpty()
     }
 
-    private fun encodeActionList(actions: List<KeyMapAction>): IntArray =
-        actions.map { getActionKey(it) }.toIntArray()
+    /**
+     * For parallel triggers only.
+     */
+    private fun performActionsAfterSequenceTriggerTimeout(
+        triggerIndex: Int,
+        sequenceTriggerIndex: Int,
+    ) = coroutineScope.launch {
+        val timeout = sequenceTriggerTimeout(triggers[sequenceTriggerIndex])
+
+        delay(timeout)
+
+        // If it equals -1 then it means the sequence trigger was triggered
+        // and it reset the counter.
+        if (lastMatchedEventIndices[sequenceTriggerIndex] == -1) {
+            return@launch
+        }
+
+        parallelTriggerActionPerformers[triggerIndex]?.onTriggered(
+            calledOnTriggerRelease = true,
+            metaState = metaStateFromActions.withFlag(metaStateFromKeyEvent),
+        )
+
+        if (triggers[triggerIndex].vibrate ||
+            forceVibrate.value ||
+            triggers[triggerIndex].longPressDoubleVibration
+        ) {
+            useCase.vibrate(vibrateDuration(triggers[triggerIndex]))
+        }
+
+        if (triggers[triggerIndex].showToast) {
+            useCase.showTriggeredToast()
+        }
+    }
+
+    private fun encodeActionList(actions: List<KeyMapAction>): IntArray = actions.map { getActionKey(it) }.toIntArray()
 
     /**
      * @return the key for the action in [actionMap]. Returns -1 if the [action] can't be found.
@@ -1535,17 +1675,13 @@ class KeyMapController(
         }
     }
 
-    private fun longPressDelay(trigger: Trigger): Long =
-        trigger.longPressDelay?.toLong() ?: defaultLongPressDelay.value
+    private fun longPressDelay(trigger: Trigger): Long = trigger.longPressDelay?.toLong() ?: defaultLongPressDelay.value
 
-    private fun doublePressTimeout(trigger: Trigger): Long =
-        trigger.doublePressDelay?.toLong() ?: defaultDoublePressDelay.value
+    private fun doublePressTimeout(trigger: Trigger): Long = trigger.doublePressDelay?.toLong() ?: defaultDoublePressDelay.value
 
-    private fun vibrateDuration(trigger: Trigger): Long =
-        trigger.vibrateDuration?.toLong() ?: defaultVibrateDuration.value
+    private fun vibrateDuration(trigger: Trigger): Long = trigger.vibrateDuration?.toLong() ?: defaultVibrateDuration.value
 
-    private fun sequenceTriggerTimeout(trigger: Trigger): Long =
-        trigger.sequenceTriggerTimeout?.toLong() ?: defaultSequenceTriggerTimeout.value
+    private fun sequenceTriggerTimeout(trigger: Trigger): Long = trigger.sequenceTriggerTimeout?.toLong() ?: defaultSequenceTriggerTimeout.value
 
     private fun setActionMapAndOptions(actions: Set<KeyMapAction>) {
         var key = 0
@@ -1594,6 +1730,7 @@ class KeyMapController(
          * null if not an external device
          */
         val descriptor: String?,
+        val repeatCount: Int,
     )
 
     private data class TriggerKeyLocation(val triggerIndex: Int, val keyIndex: Int)

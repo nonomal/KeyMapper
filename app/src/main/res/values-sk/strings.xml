@@ -76,7 +76,6 @@
     <string name="trigger_error_dnd_access_denied">Key Mapper vyžaduje povolenie na úpravu režimu Nerušiť, ak chcete, aby tlačidlá fungovali podľa očakávania v režime Nerušiť!</string>
     <string name="trigger_error_dnd_access_denied_short">Tento spúšťač nebude fungovať podľa očakávania v režime Nerušiť!</string>
     <string name="trigger_error_screen_off_root_permission_denied">Možnosť spustiť, keď je obrazovka vypnutá, potrebuje povolenie root na prácu!</string>
-    <string name="trigger_error_screen_off_root_permission_denied_short">Možnosť spustiť, keď je obrazovka vypnutá nebude fungovať!</string>
     <string name="home_error_is_battery_optimised">Vaše mapovanie prestane fungovať náhodne!</string>
     <string name="home_error_key_maps_paused">Vaše mapovanie je pozastavené!</string>
     <string name="home_error_key_maps_paused_button">Spustiť</string>
@@ -299,7 +298,6 @@
     <string name="button_done">Hotovo</string>
     <string name="button_save">Uložiť</string>
     <string name="button_fix">Opraviť</string>
-    <string name="button_recording_trigger_countdown">%d…</string>
     <string name="button_add_constraint">Pridajte obmedzenie</string>
     <string name="button_choose_keycode">Vyberte Key code</string>
     <string name="button_yes">Áno!</string>
@@ -370,18 +368,12 @@
     <string name="dialog_message_disable_battery_optimisation"><b>MUSÍTE</b> si prečítať toto<b>celé</b>, inak budete v budúcnosti <b>frustrovaný</b>! \n\nStlačte \"opraviť čiastočne\" <b>môže</b> zabrániť Androidu zastaviť aplikáciu, keď je na pozadí.\n\n<b>Toto NESTAČÍ</b>. Váš OEM skin, ako napríklad MIUI alebo Samsung Experience, môže obsahovať iné funkcie na zabíjanie aplikácií, takže ich musíte vypnúť aj pre Key Mapper podľa online sprievodcu na dontkillmyapp.com.</string>
     <string name="dialog_title_send_feedback">Odoslať spätnú väzbu</string>
     <string name="dialog_message_send_feedback">Prečítajte si príručku o tom, ako nahlásiť problémy na webovú stránku.</string>
-    <string name="dialog_message_enable_accessibility_service_to_record_trigger">Zapnite službu zjednodušenia ovládania, aby ste mohli nahrať spúšťač.</string>
     <string name="dialog_message_restart_accessibility_service_to_record_trigger">Reštartujte službu zjednodušenia ovládania tak, že ju <i>vypnete</i> a <i>zapnete</i>, aby ste mohli nahrať spúšťač.</string>
-    <string name="dialog_message_enable_accessibility_service_to_test_action">Zapnite službu zjednodušenia ovládania, aby ste mohli akciu otestovať.</string>
     <string name="dialog_message_restart_accessibility_service_to_test_action">Reštartujte službu zjednodušenia ovládania tak, že ju <i> vyp.</i> a <i>zap.</i>, aby ste mohli akciu otestovať.</string>
     <string name="dialog_message_restart_accessibility_service">Reštartujte službu zjednodušenia ovládania tak, že ju <i>vyp.</i> a <i>zap.</i>.</string>
     <string name="dialog_message_screen_pinning_warning">Použitie tohto spúšťača môže spôsobiť čiernu obrazovku pri odomknutí zariadenia po použití nastavenia pripovania obrazovky v nastaveniach zariadenia. To môže byť opravené reštartom. To sa nestane na všetkých zariadeniach, takže pozor a vypnite nastavenie, ak to robí!</string>
     <string name="dialog_title_reset_fingerprint_maps">Obnovenie máp gest odtlačkov prstov</string>
     <string name="dialog_message_reset_fingerprint_maps">Naozaj chcete resetovať mapy gest odtlačkov prstov?</string>
-    <string name="dialog_title_key_mapper_crashed">Key Mapper bol zabitý alebo zlyhal</string>
-    <string name="dialog_message_key_mapper_crashed">Je veľmi pravdepodobné, že váš telefón zabil Key Mapper, zatiaľ čo sa snažil bežať v pozadí. Toto <b>nie je</b> chyba vývojára a nie je nič, čo by mohli urobiť, aby to napravili, takže prosím, nenechávajte zlú recenziu 😃. \n\nNaásledujte návod na dontkillmyapp.com predtým, aby ste zastavili telefón pred zabitím Key Mapper?</string>
-    <string name="dialog_button_read_dont_kill_my_app_yes">Áno</string>
-    <string name="dialog_button_read_dont_kill_my_app_no">Nie</string>
     <string name="dialog_title_failed_to_create_bug_report">Nepodarilo sa vytvoriť hlásenie o chybe</string>
     <string name="pos_yes">Áno</string>
     <string name="pos_done">Hotovo</string>
@@ -589,15 +581,10 @@
     <string name="showcase_dnd_access_description_disabled">Key Mapper potrebuje prístup k režimu Nerušiť, ak chcete, aby akcie, ktoré menia hlasitosť a premapované tlačidlá hlasitosti fungovali.</string>
     <string name="showcase_dnd_access_description_enabled">Všetko dobré! :)</string>
     <string name="showcase_contributing_title">Spolupráca</string>
-    <string name="showcase_contributing_description">"Táto aplikácia je otvorený zdroj! Môžete začať prispievať tým, že zamierite na repo na sds100/KeyMapper na GitHub a pripojíte sa k serveru Discord. Aj keď nemôžete programovať, môžete prispieť tým, že pomôžete ostatným a otestujete najnovšie funkcie."</string>
     <string name="showcase_action_list">Klepnutím na 3 bodky zmeňte opakované správanie a ešte oveľa viac. Akciu môžete otestovať a opraviť chyby akcie klepnutím na ňu.</string>
     <string name="showcase_fingerprint_gesture_support_title_supported_unknown">Premapovanie gest čítačky odtlačkov prstov</string>
     <string name="showcase_fingerprint_gesture_support_title_supported">Gestá čítačky odtlačkov prstov môžete premapovať! :)</string>
     <string name="showcase_fingerprint_gesture_support_title_not_supported">Gestá čítačky odtlačkov prstov nie je možné premapovať!</string>
-    <string name="showcase_fingerprint_gesture_support_message_supported_unknown">Budete musieť zapnúť službu prístupnosti, aby Key Mapper mohol skontrolovať, či vaše zariadenie dokáže rozpoznať gestá odtlačkov prstov.</string>
-    <string name="showcase_fingerprint_gesture_support_message_supported">Vaše zariadenie dokáže detekovať gestá odtlačkov prstov! V hornej časti domovskej obrazovky sa nachádza karta na premapovanie gest odtlačkov prstov.</string>
-    <string name="showcase_fingerprint_gesture_support_message_not_supported">Vaše zariadenie nepovoľuje aplikáciám tretích strán detekovať gestá odtlačkov prstov! Vývojár s tým nemôže nič urobiť. Niektoré zariadenia majú nastavenie na potiahnutie prstom nadol na čítačke odtlačkov prstov, aby sa otvorila lišta s upozorneniami a neumožnili aplikáciám tretích strán zistiť gestá odtlačkov prstov.</string>
-    <string name="showcase_fingerprint_gesture_support_button">Zapnúť</string>
     <string name="showcase_setup_chosen_devices_again_title">Musíte znova nastaviť niektoré nastavenia</string>
     <string name="showcase_setup_chosen_devices_again_message">Zdá sa, že ste toto nastavenie používali na automatickú zmenu klávesnice alebo zobrazenie výberu metódy vstupu, keď sa zariadenie Bluetooth pripojí a odpojí. Key Mapper teraz umožňuje používať akékoľvek vstupné zariadenie a nielen zariadenia Bluetooth. Neexistuje spôsob, ako migrovať staré nastavenia tak, aby nové funkcie fungovali, takže budete musieť znova vybrať zariadenia.</string>
     <string name="showcase_request_shizuku_permission">Udeliť</string>
@@ -868,4 +855,8 @@
     <!--  About  -->
     <!-- Advanced triggers -->
     <!--  Purchasing  -->
+    <!--  Dpad trigger setup bottom sheet  -->
+    <string name="setup_gui_keyboard_enable_keyboard_button">Zapnúť</string>
+    <string name="setup_gui_keyboard_enable_keyboard_button_disabled">Povolené</string>
+    <!-- No keys recorded bottom sheet -->
 </resources>

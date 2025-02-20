@@ -2,11 +2,11 @@
 <resources>
     <string name="slogan">Uwolnij swoje przyciski!</string>
     <string name="no_action_chosen">Nie wybrano działania</string>
-    <string name="accessibility_service_explanation">Aplikacja Key Mapper wymaga włączenia usługi ułatwień dostępu, aby mogła wykrywać i zmieniać działanie naciśnięć przycisków, gdy jesteś poza aplikacją. Mapy klawiszy będą działać dopiero po włączeniu usługi ułatwień dostępu. Należy również włączyć usługę, aby utworzyć wyzwalacz.</string>
     <string name="selection_count">%d elementy</string>
     <string name="enable">Włącz</string>
     <string name="open">Otwórz</string>
     <string name="recyclerview_placeholder">¯\\_(ツ)_/¯\n\nNic tu nie ma!</string>
+    <string name="triggers_recyclerview_placeholder">Pierwszym krokiem jest dodanie kilku przycisków, które będą uruchamiać mapę klawiszy.\n\nNajpierw kliknij \"Wprowadź wyzwalacz\", a następnie naciśnij przyciski, które chcesz zmienić. One pojawią się tutaj.\n\nAlternatywnie możesz uruchomić mapę klawiszy za pomocą \"zaawansowanego wyzwalacza\".</string>
     <string name="actions_recyclerview_placeholder">Dodaj działanie!</string>
     <string name="keymap_recyclerview_placeholder">¯\\_(ツ)_/¯\n\nUtwórz mapę klawiszy!</string>
     <string name="action_shortcut_list_recyclerview_placeholder">¯\\_(ツ)_/¯\n\nNie wybrano żadnych działań dla tego skrótu!</string>
@@ -82,7 +82,6 @@
     <string name="trigger_error_dnd_access_denied">Key Mapper wymaga uprawnień do modyfikowania trybu Nie przeszkadzać, jeśli chcesz, aby przyciski działały zgodnie z oczekiwaniami w trybie Nie przeszkadzać!</string>
     <string name="trigger_error_dnd_access_denied_short">Ten wyzwalacz nie będzie działał zgodnie z oczekiwaniami w trybie Nie przeszkadzać!</string>
     <string name="trigger_error_screen_off_root_permission_denied">Opcja wyzwalania, gdy ekran jest wyłączony, wymaga uprawnień roota do działania!</string>
-    <string name="trigger_error_screen_off_root_permission_denied_short">Opcja wyzwalania, gdy ekran jest wyłączony, nie będzie działać!</string>
     <string name="trigger_error_cant_detect_in_phone_call">Ten wyzwalacz nie zadziała, gdy telefon dzwoni lub w trakcie rozmowy telefonicznej!</string>
     <string name="trigger_error_cant_detect_in_phone_call_explanation">Android nie pozwala usługom ułatwień dostępu wykrywać naciśnięcia przycisków głośności, gdy telefon dzwoni lub trwa rozmowa telefoniczna, ale umożliwia wykrywanie ich przez metody wprowadzania. Dlatego należy użyć jednej z klawiatur Key Mapper, jeśli chcesz, aby ten wyzwalacz działał w takich sytuacjach.</string>
     <string name="trigger_error_gesture_stroke_count_too_high">Zbyt wiele palców do wykonania gestu ze względu na ograniczenia systemu Android.</string>
@@ -340,10 +339,12 @@
     <!-- Button titles -->
     <string name="button_add_action">Dodaj działanie</string>
     <string name="button_record_trigger">Wprowadź wyzwalacz</string>
+    <string name="button_advanced_triggers">Zaawansowane wyzwalacze</string>
+    <string name="button_advanced_triggers_badge">Nowość!</string>
+    <string name="button_dismiss_advanced_triggers_sheet_content_description">Odrzuć wybór zaawansowanych wyzwalaczy.</string>
     <string name="button_done">Gotowe</string>
     <string name="button_save">Zapisz</string>
     <string name="button_fix">Napraw</string>
-    <string name="button_recording_trigger_countdown">%d…</string>
     <string name="button_add_constraint">Dodaj ograniczenie</string>
     <string name="button_choose_keycode">Wybierz kod klawisza</string>
     <string name="button_yes">Tak!</string>
@@ -371,8 +372,6 @@
     <string name="dialog_title_choose_flash">Wybierz lampę błyskową</string>
     <string name="dialog_title_cant_find_accessibility_settings_page">Nie można wykryć strony ustawień ułatwień dostępu</string>
     <string name="dialog_title_cant_record_trigger">Nie możesz wprowadzić wyzwalacza?</string>
-    <string name="dialog_title_discard_changes">Odrzucenie zmian</string>
-    <string name="dialog_message_discard_changes">Czy na pewno chcesz odrzucić zmiany?</string>
     <string name="dialog_message_root_prompt">Jeśli wiesz, że Twój telefon nie jest zrootowany lub nie wiesz, czym jest root, nie możesz korzystać z funkcji, które działają tylko na zrootowanych urządzeniach. Po kliknięciu \"OK\" zostaniesz przeniesiony do ustawień.
             W ustawieniach przewiń w dół i kliknij \"Key Mapper ma uprawnienia roota\", aby móc korzystać z funkcji/działań roota.</string>
     <string name="dialog_message_downloading">Pobieranie…</string>
@@ -419,20 +418,12 @@
     <string name="dialog_message_disable_battery_optimisation"><b>MUSISZ</b> to <b>wszystko</b> przeczytać, w przeciwnym razie otrzymasz <b>frustrację</b> w przyszłości!\n\nKliknięcie \"Napraw częściowo\" <b>może</b> uniemożliwić Androidowi zatrzymanie aplikacji, gdy działa ona w tle.\n\n<b>To NIE WYSTARCZY</b>. Skórka producenta, taka jak MIUI lub Samsung Experience, może mieć inne funkcje zatrzymywania aplikacji, więc MUSISZ je wyłączyć dla Key Mapper, postępując zgodnie z przewodnikiem online na dontkillmyapp.com.</string>
     <string name="dialog_title_send_feedback">Prześlij opinię</string>
     <string name="dialog_message_send_feedback">Prosimy o zapoznanie się z poradnikiem jak zgłaszać problemy, na stronie internetowej.</string>
-    <string name="dialog_message_enable_accessibility_service_to_record_trigger">Włącz usługę ułatwień dostępu, aby wprowadzić wyzwalacz.</string>
     <string name="dialog_message_restart_accessibility_service_to_record_trigger">Uruchom ponownie usługę ułatwień dostępu, <i>wyłączając</i> ją i <i>włączając</i> ponownie, zanim będzie można wprowadzić wyzwalacz.</string>
-    <string name="dialog_message_enable_accessibility_service_to_test_action">Włącz usługę ułatwień dostępu, aby przetestować czynność.</string>
     <string name="dialog_message_restart_accessibility_service_to_test_action">Uruchom ponownie usługę ułatwień dostępu, <i>wyłączając</i> ją i <i>włączając</i> ponownie, aby móc przetestować czynność.</string>
     <string name="dialog_message_restart_accessibility_service">Uruchom ponownie usługę ułatwień dostępu, <i>wyłączając</i> ją i <i>włączając</i> ponownie.</string>
     <string name="dialog_message_screen_pinning_warning">Użycie tego wyzwalacza może spowodować czarny ekran po odblokowaniu urządzenia po użyciu fukcji przypinania ekranu w ustawieniach urządzenia. Można to naprawić przez ponowne uruchomienie urządzenia. Nie dzieje się tak na wszystkich urządzeniach, więc uważaj i wyłącz to ustawienie, jeśli tak się stanie!</string>
     <string name="dialog_title_reset_fingerprint_maps">Zresetuj mapy gestów czytnika linii papilarnych</string>
     <string name="dialog_message_reset_fingerprint_maps">Czy na pewno chcesz zresetować mapy gestów czytnika linii papilarnych?</string>
-    <string name="dialog_title_key_mapper_crashed">Key Mapper został zatrzymany lub uległ awarii</string>
-    <string name="dialog_message_key_mapper_crashed">Jest bardzo prawdopodobne, że Twoje urządzenie zatrzymało Key Mapper, gdy próbował działać w tle. <b>Nie jest</b> to wina programisty, więc nie zostawiaj złej recenzji 😃, ponieważ nie można nic zrobić z aplikacją, aby to naprawić.
-
-    \n\nCzy postępowałeś(-aś) już zgodnie z przewodnikiem na dontkillmyapp.com, aby uniemożliwić urządzeniu zatrzymanie Key Mapper?</string>
-    <string name="dialog_button_read_dont_kill_my_app_yes">Tak</string>
-    <string name="dialog_button_read_dont_kill_my_app_no">Nie</string>
     <string name="dialog_title_failed_to_create_bug_report">Nie udało się utworzyć zgłoszenie o błędzie</string>
     <string name="dialog_title_request_shizuku_permission">Poproś o uprawnienie Shizuku</string>
     <string name="dialog_message_request_shizuku_permission">Ponieważ używasz Shizuku, zdecydowanie zaleca się udzielenie tego uprawnienia, ponieważ niektóre funkcje Key Mappera można wykonać bez konieczności konfigurowania czegokolwiek (np. wprowadzanie kodów klawiszy bez użycia klawiatury Key Mapper).</string>
@@ -446,7 +437,6 @@
     <string name="dialog_title_fix_dnd_trigger_error">Udziel dostęp do trybu Nie przeszkadzać</string>
     <string name="dialog_message_fix_dnd_trigger_error">Spowoduje to przejście do strony ustawień urządzenia, na której możesz zarządzać aplikacjami, które mogą zmieniać stan Nie przeszkadzać. To <b>nie występuje na niektórych urządzeniach</b>, więc możesz kliknąć Nie wyświetlaj ponownie, jeśli nie widzisz aplikacji Key Mapper na tej liście.</string>
     <string name="pos_yes">Tak</string>
-    <string name="pos_confirm">Potwierdź</string>
     <string name="pos_done">Gotowe</string>
     <string name="pos_opt_in">Zaakceptuj</string>
     <string name="pos_grant_write_secure_settings_guide">Przewodnik</string>
@@ -660,15 +650,10 @@
     <string name="showcase_dnd_access_description_disabled">Key Mapper wymaga dostępu do trybu Nie przeszkadzać, aby czynności zmieniające głośność i przyciski głośności ze zmienionymi funkcjami działały.</string>
     <string name="showcase_dnd_access_description_enabled">Wszystko jest dobrze! :)</string>
     <string name="showcase_contributing_title">Wkład</string>
-    <string name="showcase_contributing_description">"Ta aplikacja to otwarte oprogramowanie! Możesz zacząć współtworzyć, przechodząc do repozytorium sds100/KeyMapper na GitHub i dołączając do serwera Discord. Nawet jeśli nie potrafisz programować, możesz wnieść swój wkład, pomagając innym i testując najnowsze funkcje."</string>
     <string name="showcase_action_list">Kliknij przycisk z trzema kropkami, aby zmienić zachowanie powtarzania i nie tylko. Klikając na czynność możesz ją przetestować i naprawić jej błędy.</string>
     <string name="showcase_fingerprint_gesture_support_title_supported_unknown">Zmień funkcje gestów czytnika linii papilarnych</string>
     <string name="showcase_fingerprint_gesture_support_title_supported">Możesz zmienić funkcje gestów czytnika linii papilarnych! :)</string>
     <string name="showcase_fingerprint_gesture_support_title_not_supported">Nie można zmienić funcje gestów czytnika linii papilarnych!</string>
-    <string name="showcase_fingerprint_gesture_support_message_supported_unknown">Musisz włączyć usługę ułatwień dostępu, aby Key Mapper mógł sprawdzić, czy Twoje urządzenie obsługuje wykrywanie gestów czytnika linii papilarnych.</string>
-    <string name="showcase_fingerprint_gesture_support_message_supported">Twoje urządzenie obsługuje wykrywanie gestów na czytniku linii papilarnych! W górnej części ekranu głównego znajduje się karta do zmiany funkcji tych gestów.</string>
-    <string name="showcase_fingerprint_gesture_support_message_not_supported">Twoje urządzenie nie pozwala aplikacjom innych firm na wykrywanie gestów czytnika linii papilarnych! Programista nie może nic z tym poradzić. Niektóre urządzenia mają ustawienie przesuwania w dół po czytniku, aby rozwinąć pasek powiadomień i nie zezwalają aplikacjom innych firm na wykrywanie na nim gestów.</string>
-    <string name="showcase_fingerprint_gesture_support_button">Włącz</string>
     <string name="showcase_setup_chosen_devices_again_title">Musisz ponownie skonfigurować niektóre ustawienia</string>
     <string name="showcase_setup_chosen_devices_again_message">Wygląda na to, że używasz ustawienia do automatycznej zmiany klawiatury lub wyświetlania selektora metody wprowadzania, gdy urządzenie Bluetooth się łączy i rozłącza. Key Mapper umożliwia teraz korzystanie z dowolnego urządzenia wejściowego, a nie tylko urządzeń Bluetooth. Nie ma sposobu na migrację starych ustawień w taki sposób, aby nowa funkcja działała, więc trzeba będzie ponownie wybrać urządzenia.</string>
     <string name="showcase_grant_shizuku_permission_denied_title">Udziel uprawnienie Shizuku</string>
@@ -988,6 +973,7 @@
     <string name="action_play_sound">Odtwórz dźwięk</string>
     <string name="action_dismiss_most_recent_notification">Odrzuć ostatnie powiadomienie</string>
     <string name="action_dismiss_all_notifications">Odrzuć wszystkie powiadomienia</string>
+    <string name="action_device_controls">Ekran sterowania urządzeniami</string>
     <!-- action labels -->
     <!-- action category labels -->
     <string name="action_cat_navigation">Nawigacja</string>
@@ -1070,5 +1056,39 @@
     <string name="about_team_bydario_role">Tłumacz (hiszpański)</string>
     <!--  About  -->
     <!-- Advanced triggers -->
+    <string name="assistant_any_trigger_name">Dowolny asystent</string>
+    <string name="assistant_device_trigger_name">Asystent urządzenia</string>
+    <string name="assistant_voice_trigger_name">Asystent głosowy</string>
+    <string name="advanced_triggers_sheet_title">Zaawansowane wyzwalacze</string>
+    <string name="advanced_triggers_sheet_text">Programista nie wierzy, że reklamy są zrównoważoną lub przyjazną użytkownikowi formą monetyzacji, więc te płatne wyzwalacze pomagają wspierać rozwój ❤️. Otrzymasz również priorytetowe wsparcie.</string>
+    <string name="assistant_trigger_product_title">Wyzwalacz asystenta</string>
+    <string name="assistant_trigger_product_description">Czy wiesz, że możesz zmienić przycisk asystenta urządzenia? Zamiast uruchamiać asystenta Google lub Bixby, urządzenie może wykonać niestandardową akcję. Działa nawet, gdy ekran jest wyłączony!</string>
+    <string name="assistant_trigger_purchase_thank_you_title">Dziękujemy za wsparcie aplikacji! ❤️</string>
+    <string name="assistant_trigger_purchase_thank_you_message">Zakup zakończył się sukcesem i teraz możesz używać wyzwalaczy asystenta. Jako płatny użytkownik Key Mapper otrzymasz priorytetową pomoc w korzystaniu z aplikacji. Na tej stronie znajduje się teraz przycisk, aby skontaktować się z programistą.</string>
+    <string name="trigger_error_assistant_activity_not_chosen">Aby ten wyzwalacz działał, musisz ustawić Key Mapper jako domyślną aplikację asystenta cyfrowego.</string>
+    <string name="trigger_error_assistant_activity_not_chosen_short">Key Mapper musi być domyślnym asystentem.</string>
+    <string name="trigger_error_assistant_not_purchased">Musisz kupić funkcję wyzwalacza asystenta!</string>
+    <string name="advanced_triggers_learn_more_button">Dowiedz się więcej</string>
+    <string name="notification_assistant_trigger_feature_title">Nowy wyzwalacz! Czy wiesz, że możesz zmienić przycisk asystenta?</string>
+    <string name="notification_assistant_trigger_feature_text">Zamiast uruchamiać Asystenta Google lub Bixby, możesz wykonać wybrane działanie. Kliknij, aby dowiedzieć się więcej.</string>
     <!--  Purchasing  -->
+    <string name="unlock_product_button">Odblokuj (%s)</string>
+    <string name="use_product_button">Użyj</string>
+    <string name="loading_product_button">Ładuję…</string>
+    <string name="retry_loading_price_button">Spróbuj ponownie pobrać cenę</string>
+    <string name="purchasing_error_cancelled">Zakup anulowany.</string>
+    <string name="purchasing_error_not_implemented">Wymaga to płatnej funkcji, którą można kupić wyłącznie pobierając aplikację Key Mapper z Google Play.</string>
+    <string name="purchasing_error_network">Napotkano błąd sieciowy. Czy masz połączenie z internetem?</string>
+    <string name="purchasing_error_product_not_found">Produkt nie został znaleziony.</string>
+    <string name="purchasing_error_store_problem">Google Play napotkał błąd.</string>
+    <string name="purchasing_error_dialog_title">Coś poszło nie tak 😕</string>
+    <string name="purchasing_error_dialog_button_retry">Spróbuj ponownie</string>
+    <string name="purchasing_contact_developer_button">Skontaktuj się z programistą</string>
+    <string name="purchasing_error_assistant_not_purchased_home_screen">Musisz kupić funkcję wyzwalacza asystenta! Kliknij mapę klawiszy, a następnie kup ją, klikając \"Zaawansowane wyzwalacze\".</string>
+    <string name="purchasing_not_implemented_bottom_sheet_text">Zaawansowane wyzwalacze to płatna funkcja, ale pobrano Key Mapper wersji open source, która nie obsługuje tego modułu ani rozliczeń Google Play. Aby uzyskać dostęp do tych funkcji, pobierz Key Mapper z Google Play.</string>
+    <string name="purchasing_download_key_mapper_from_google_play">Pobierz wersję z Google Play</string>
+    <!--  Dpad trigger setup bottom sheet  -->
+    <string name="setup_gui_keyboard_enable_keyboard_button">Włącz</string>
+    <string name="setup_gui_keyboard_enable_keyboard_button_disabled">Włączone</string>
+    <!-- No keys recorded bottom sheet -->
 </resources>

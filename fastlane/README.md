@@ -19,7 +19,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane testing
 ```
 
-Create and deploy testing release
+Create testing release
 
 ### prod
 
@@ -28,6 +28,14 @@ Create and deploy testing release
 ```
 
 Create and deploy production release
+
+### alpha
+
+```sh
+[bundle exec] fastlane alpha
+```
+
+Deploy alpha release
 
 ----
 
